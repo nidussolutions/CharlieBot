@@ -4,6 +4,21 @@ import { CharliesInstructions } from '../prompts/systemInstructions.js';
 import { recallMemories, formatMemoriesBlock, saveMemory } from '../memory/index.js';
 import { extractMemoriesFromExchange } from '../memory/extractor.js';
 
+function extractText(res) {
+  try {
+    if (typeof res?.text === 'function') return (res.text() || '').trim();
+    if (typeof res?.text === 'string') return res.text.trim();
+
+    const parts = res?.candidates?.[0]?.content?.parts;
+    if (Array.isArray(parts)) {
+      const joined = parts.map(p => p?.text || '').join('');
+      if (joined) return joined.trim();
+    }
+  } catch { }
+  return '';
+}
+
+
 export async function generateText({ userId, prompt }) {
   await saveMemory({
     userId,
@@ -23,7 +38,7 @@ export async function generateText({ userId, prompt }) {
     config: { systemInstruction }
   });
 
-  const text = response.text || '';
+  const text = extractText(response);
 
   try {
     const extracted = await extractMemoriesFromExchange({ userText: prompt, assistantText: text });

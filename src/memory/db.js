@@ -2,6 +2,9 @@ import Database from 'better-sqlite3';
 import path from 'node:path';
 import fs from 'node:fs';
 
+import { IsProduction } from '../config.js';
+
+
 const DB_PATH = path.resolve(process.env.DB_DIR || process.cwd(), 'memory.sqlite');
 
 export function getDb() {
@@ -31,8 +34,17 @@ export function getDb() {
 
     -- Índice único para deduplicar por usuário+hash
     CREATE UNIQUE INDEX IF NOT EXISTS ux_memories_user_hash ON memories(user_id, hash);
+
+    CREATE TABLE IF NOT EXISTS users (
+      user_id TEXT PRIMARY KEY,
+      name TEXT,
+      email TEXT,
+      updated_at DATETIME NOT NULL DEFAULT (datetime('now'))
+    );
   `);
 
-  console.log('[memory] usando', DB_PATH);
+  if (!IsProduction) {
+    console.log('[memory] Usando', DB_PATH);
+  }
   return db;
 }
