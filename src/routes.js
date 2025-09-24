@@ -57,9 +57,10 @@ route.post('/telegram/webhook', async (req, res) => {
   // log de produção - nome, numero e data
   if (IsProduction) {
     const name = req.body?.message?.from?.first_name || 'Desconhecido';
-    const username = req.body?.message?.from?.username || 'Desconhecido';
+    const isBot = req.body?.message?.from?.is_bot ? ' Sim' : 'Não';
+    const text = req.body?.message?.text ? ' Sim' : 'Não';
     const date = new Date(req.body?.message?.date * 1000).toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' });
-    console.log(`Acesso ao webhook - Nome: ${name}, Username: @${username}, Data: ${date}`);
+    console.log(`Acesso ao webhook - Nome: ${name}, Bot: @${isBot}, Data: ${date}, Text: ${text}`);
   }
 
 
