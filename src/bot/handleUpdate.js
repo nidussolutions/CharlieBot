@@ -31,6 +31,11 @@ export async function handleUpdate(update) {
 
     if (!IsProduction) console.log('Mensagem recebida:', text);
 
+    if (/^\/config\b/i.test(text)) {
+      await handleConfigCommand({ chatId, text });
+      return;
+    }
+
     const profile = getUserProfile(chatId);
     if (!profile) {
       const help =
@@ -40,11 +45,6 @@ export async function handleUpdate(update) {
         'Ou: /config Joao da Silva joao@exemplo.com';
       sendMessage(chatId, help)
 
-      return;
-    }
-
-    if (/^\/config\b/i.test(text)) {
-      await handleConfigCommand({ chatId, text });
       return;
     }
 
