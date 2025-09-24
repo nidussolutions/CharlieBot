@@ -5,10 +5,8 @@ import {
 } from './config.js';
 
 import {
-  getMe,
   setWebhook,
   deleteWebhook,
-  sendMessage
 } from './telegram.js';
 
 import { handleUpdate } from './bot/handleUpdate.js';

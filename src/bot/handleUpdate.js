@@ -2,6 +2,7 @@ import { IsProduction } from '../config.js';
 import { generateText } from '../llm/generate.js';
 import { sendChatAction, sendMessage } from '../telegram.js';
 import { handleConfigCommand } from './commands/config.js';
+import { getUserProfile } from '../users/store.js';
 
 async function withTyping(chatId, fn, action = 'typing', periodMs = 4500) {
   let active = true;
@@ -30,6 +31,7 @@ export async function handleUpdate(update) {
 
     if (!IsProduction) console.log('Mensagem recebida:', text);
 
+    const profile = getUserProfile(chatId);
     if (!profile) {
       const help =
         'Olá! Parece que você ainda não temos seu registro.\n' +
@@ -61,7 +63,7 @@ export async function handleUpdate(update) {
     console.error('Erro em handleUpdate:', err);
     try {
       if (update?.message?.chat?.id) {
-        await sendMessage(update.message.chat.id, 'Tive um problema ao processar sua mensagem. Tente novamente em instantes.');
+        sendMessage(update.message.chat.id, 'Tive um problema ao processar sua mensagem. Tente novamente em instantes.');
       }
     } catch { }
   }
