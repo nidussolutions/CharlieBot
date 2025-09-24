@@ -49,6 +49,16 @@ route.post('/telegram/webhook', async (req, res) => {
 
   res.status(200).end();
 
+  // Log de acesso ao webhook
+  if (!IsProduction) console.log('Webhook recebido:', req.body);
+
+  // log de produção - ip e data
+  if (IsProduction) {
+    const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+    const now = new Date().toISOString();
+    console.log(`[${now}] Webhook recebido de ${ip}`);
+  }
+
   const update = req.body;
   await handleUpdate(update)
 });
