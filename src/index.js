@@ -4,7 +4,7 @@ import { PORT, IsProduction } from './config.js';
 
 const app = express();
 app.use(express.json({ limit: '1mb' }));
-
+app.set('trust proxy', true)
 app.use('/', route);
 
 app.listen(PORT, () => {
