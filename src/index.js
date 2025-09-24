@@ -8,9 +8,10 @@ import {
   getMe,
   setWebhook,
   deleteWebhook,
-  handleUpdate,
   sendMessage
 } from './telegram.js';
+
+import { handleUpdate } from './bot/handleUpdate.js';
 
 const app = express();
 app.use(express.json({ limit: '1mb' }));
@@ -73,7 +74,7 @@ app.post('/telegram/webhook', async (req, res) => {
   res.status(200).end();
 
   const update = req.body;
-  await handleUpdate(update);
+  await handleUpdate(update)
 });
 
 app.listen(PORT, () => {
