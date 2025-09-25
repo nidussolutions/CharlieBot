@@ -3,6 +3,7 @@ import { generateText } from '../llm/generate.js';
 import { sendChatAction, sendMessage } from '../telegram.js';
 import { getUserProfile } from '../users/store.js';
 import { BASE_URL } from '../config.js';
+import { tryCreateEventFromText } from '../google/createFromNL.js';
 
 import {
   setConfig,
@@ -75,6 +76,18 @@ export async function handleUpdate(update) {
 
     if (isCommand(text, 'profile')) {
       await showProfile(chatId);
+      return;
+    }
+
+    const { created, confirmText, message } = await tryCreateEventFromText(chatId, text);
+
+    if (message) {
+      sendMessage(chatId, message);
+      return;
+    }
+
+    if (created) {
+      sendMessage(chatId, confirmText);
       return;
     }
 
