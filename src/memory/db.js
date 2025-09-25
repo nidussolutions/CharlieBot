@@ -41,6 +41,18 @@ export function getDb() {
       email TEXT,
       updated_at DATETIME NOT NULL DEFAULT (datetime('now'))
     );
+
+    CREATE TABLE IF NOT EXISTS google_accounts (
+      user_id TEXT PRIMARY KEY,
+      google_sub TEXT,
+      email TEXT,
+      access_token TEXT,
+      refresh_token TEXT,
+      token_expiry DATETIME,
+      scope TEXT,
+      updated_at DATETIME NOT NULL DEFAULT (datetime('now'))
+    );
+
   `);
 
   if (!IsProduction) {

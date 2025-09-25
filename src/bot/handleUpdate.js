@@ -1,8 +1,16 @@
 import { IsProduction } from '../config.js';
 import { generateText } from '../llm/generate.js';
 import { sendChatAction, sendMessage } from '../telegram.js';
-import { setConfig, showHelp } from './commands/index.js';
 import { getUserProfile } from '../users/store.js';
+import { BASE_URL } from '../config.js';
+
+import {
+  setConfig,
+  showHelp,
+  showProfile,
+  linkGoogle,
+  unlinkGoogleCmd
+} from './commands/index.js';
 
 const TYPING_PERIOD_MS = 4500;
 
@@ -52,6 +60,21 @@ export async function handleUpdate(update) {
         'ou\n' +
         '/config Joao da Silva joao@exemplo.com';
       sendMessage(chatId, help);
+      return;
+    }
+
+    if (/^\/linkgoogle\b/i.test(text)) {
+      await linkGoogle({ chatId, baseUrl: BASE_URL });
+      return;
+    }
+
+    if (/^\/unlinkgoogle\b/i.test(text)) {
+      await unlinkGoogleCmd({ chatId });
+      return;
+    }
+
+    if (isCommand(text, 'profile')) {
+      await showProfile(chatId);
       return;
     }
 

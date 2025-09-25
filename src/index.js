@@ -1,11 +1,14 @@
 import express from 'express';
 import route from './routes.js';
 import { PORT, IsProduction } from './config.js';
+import { router as googleRoutes } from './google/routes.js';
 
 const app = express();
 app.use(express.json({ limit: '1mb' }));
 app.set('trust proxy', true)
+
 app.use('/', route);
+app.use(googleRoutes);
 
 app.listen(PORT, () => {
   console.log(`[Environment] ${IsProduction ? 'Produção' : 'Desenvolvimento'}`);

@@ -8,8 +8,9 @@ export default function helpCommand({ chatId }) {
   const message =
     `Olá! Eu sou o Charlie, seu assistente virtual. \n` +
     `Aqui estão alguns comandos que você pode usar:\n\n` +
+    `/config - configura seus dados locais \n` +
+    `/linkgoogle - vincula sua conta Google.\n` +
     `/help - Mostra esta mensagem de ajuda.\n` +
-    `/config nome=Seu Nome email=seu@email.com \n\n` +
-    `Sinta-se à vontade para me enviar qualquer pergunta ou solicitar assistência!`;
+    `\nSinta-se à vontade para me enviar qualquer pergunta ou solicitar assistência!`;
   sendPlain(chatId, message);
 };
