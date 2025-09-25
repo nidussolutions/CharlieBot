@@ -1,11 +1,11 @@
 import { escapeMarkdownV2, sendMessage } from '../../telegram.js';
-import { upsertUserProfile, getUserProfile } from '../../users/store.js';
+import { upsertUserProfile } from '../../users/store.js';
 import { saveMemory } from '../../memory/index.js';
 
 const EMAIL_RX = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i;
 
 function parseConfigText(text) {
-  const raw = text.replace(/^\/config\s*/i, '').trim();
+  const raw = text.replace(/^\/conf\s*/i, '').trim();
 
   if (!raw) return {};
 
@@ -41,11 +41,10 @@ export function sendPlain(chatId, text, opts = {}) {
   return sendMessage(chatId, text, { ...opts });
 }
 
-export async function handleConfigCommand({ chatId, text }) {
+export default async function handleConfigCommand({ chatId, text }) {
   const { name, email } = parseConfigText(text);
 
   if (!name && !email) {
-    const profile = getUserProfile(chatId);
     if (profile?.name && profile?.email) {
       const msg =
         `Suas configurações atuais:\n` +
@@ -57,8 +56,8 @@ export async function handleConfigCommand({ chatId, text }) {
       const help =
         'Nenhuma configuração encontrada.\n' +
         'Para configurar, envie por exemplo:\n' +
-        '/config nome=Joao da Silva email=joao@exemplo.com\n' +
-        'Ou: /config Joao da Silva joao@exemplo.com';
+        '/conf nome=Joao da Silva email=joao@exemplo.com\n' +
+        'Ou: /conf Joao da Silva joao@exemplo.com';
       sendPlain(chatId, help);
     }
     return;

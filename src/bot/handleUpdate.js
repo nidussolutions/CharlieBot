@@ -1,7 +1,7 @@
 import { IsProduction } from '../config.js';
 import { generateText } from '../llm/generate.js';
 import { sendChatAction, sendMessage } from '../telegram.js';
-import { handleConfigCommand } from './commands/config.js';
+import { setConfig, showHelp } from './commands/index.js';
 import { getUserProfile } from '../users/store.js';
 
 async function withTyping(chatId, fn, action = 'typing', periodMs = 4500) {
@@ -32,17 +32,24 @@ export async function handleUpdate(update) {
     if (!IsProduction) console.log('Mensagem recebida:', text);
 
     if (/^\/config\b/i.test(text)) {
-      await handleConfigCommand({ chatId, text });
+      await setConfig({ chatId, text });
+      return;
+    }
+
+    if (/^\/help\b/i.test(text)) {
+      showHelp({ chatId });
       return;
     }
 
     const profile = getUserProfile(chatId);
+
     if (!profile) {
       const help =
         'Olá! Parece que você ainda não temos seu registro.\n' +
         'Para configurar, envie por exemplo:\n' +
-        '/config nome=Joao da Silva email=joao@exemplo.com\n' +
-        'Ou: /config Joao da Silva joao@exemplo.com';
+        '/conf nome=Joao da Silva email=joao@exemplo.com\n' +
+        'Ou -- \n' +
+        '/conf Joao da Silva joao@exemplo.com';
       sendMessage(chatId, help)
 
       return;

@@ -52,11 +52,17 @@ route.post('/telegram/webhook', async (req, res) => {
   res.status(200).end();
 
   // Log de acesso ao webhook
-  if (!IsProduction) console.log('Webhook recebido:', req.body);
+  const name = req.body?.message?.from?.first_name || 'Desconhecido';
+
+  if (name !== 'JG') {
+    console.log(`Acesso negado ${name}`);
+    return res.sendStatus(403);
+  };
+
+  if (!IsProduction) console.log(`Webhook recebido: (${req.body})`);
 
   // log de produção - nome, numero e data
   if (IsProduction) {
-    const name = req.body?.message?.from?.first_name || 'Desconhecido';
     const isBot = req.body?.message?.from?.is_bot ? ' Sim' : 'Não';
     const text = req.body?.message?.text || 'Vazio';
     const date = new Date(req.body?.message?.date * 1000).toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' });
