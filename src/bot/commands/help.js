@@ -9,8 +9,7 @@ export default function helpCommand({ chatId }) {
     `Olá! Eu sou o Charlie, seu assistente virtual. \n` +
     `Aqui estão alguns comandos que você pode usar:\n\n` +
     `/help - Mostra esta mensagem de ajuda.\n` +
-    `/config nome=Seu Nome email=seu@email.com \n` +
-    `/profile - Mostra suas configurações atuais.\n\n` +
+    `/config nome=Seu Nome email=seu@email.com \n\n` +
     `Sinta-se à vontade para me enviar qualquer pergunta ou solicitar assistência!`;
   sendPlain(chatId, message);
 };

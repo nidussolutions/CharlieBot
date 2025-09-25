@@ -4,13 +4,12 @@ import { sendChatAction, sendMessage } from '../telegram.js';
 import { setConfig, showHelp } from './commands/index.js';
 import { getUserProfile } from '../users/store.js';
 
-async function withTyping(chatId, fn, action = 'typing', periodMs = 4500) {
+const TYPING_PERIOD_MS = 4500;
+
+async function withTyping(chatId, fn, action = 'typing', periodMs = TYPING_PERIOD_MS) {
   let active = true;
   sendChatAction(chatId, action).catch(() => { });
-  const id = setInterval(() => {
-    if (!active) return;
-    sendChatAction(chatId, action).catch(() => { });
-  }, periodMs);
+  const id = setInterval(() => active && sendChatAction(chatId, action).catch(() => { }), periodMs);
 
   try {
     return await fn();
@@ -20,38 +19,39 @@ async function withTyping(chatId, fn, action = 'typing', periodMs = 4500) {
   }
 }
 
+function isCommand(text, cmd) {
+  return new RegExp(`^/${cmd}\\b`, 'i').test(text);
+}
+
 export async function handleUpdate(update) {
   try {
     if (!update?.message) return;
 
-    const msg = update.message;
+    const { message: msg } = update;
     const chatId = msg.chat.id;
     const text = (msg.text || '').trim();
     if (!text) return;
-
     if (!IsProduction) console.log('Mensagem recebida:', text);
 
-    if (/^\/config\b/i.test(text)) {
+    if (isCommand(text, 'config') || isCommand(text, 'conf')) {
       await setConfig({ chatId, text });
       return;
     }
 
-    if (/^\/help\b/i.test(text)) {
+    if (isCommand(text, 'help')) {
       showHelp({ chatId });
       return;
     }
 
     const profile = getUserProfile(chatId);
-
     if (!profile) {
       const help =
-        'Olá! Parece que você ainda não temos seu registro.\n' +
+        'Olá! Parece que você ainda não tem registro.\n' +
         'Para configurar, envie por exemplo:\n' +
-        '/conf nome=Joao da Silva email=joao@exemplo.com\n' +
-        'Ou -- \n' +
-        '/conf Joao da Silva joao@exemplo.com';
-      sendMessage(chatId, help)
-
+        '/config nome=Joao da Silva email=joao@exemplo.com\n' +
+        'ou\n' +
+        '/config Joao da Silva joao@exemplo.com';
+      sendMessage(chatId, help);
       return;
     }
 
@@ -65,7 +65,6 @@ export async function handleUpdate(update) {
       reply_to_message_id: msg.message_id,
       parse_mode: 'MarkdownV2'
     });
-
   } catch (err) {
     console.error('Erro em handleUpdate:', err);
     try {
