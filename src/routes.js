@@ -54,11 +54,6 @@ route.post('/telegram/webhook', async (req, res) => {
   // Log de acesso ao webhook
   const name = req.body?.message?.from?.first_name || 'Desconhecido';
 
-  if (name !== 'JG') {
-    console.log(`Acesso negado ${name}`);
-    return res.sendStatus(403);
-  };
-
   if (!IsProduction) console.log(`Webhook recebido: (${req.body})`);
 
   // log de produção - nome, numero e data
