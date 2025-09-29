@@ -26,3 +26,8 @@ lerna-debug.log*
 .env
 .env.local
 .env.*.local 
+
+#SQLite database files
+*.sqlite
+*.sqlite3
+*.sqlite-*
